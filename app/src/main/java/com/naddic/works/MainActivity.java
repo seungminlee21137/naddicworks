@@ -3,6 +3,7 @@ package com.naddic.works;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -24,19 +25,20 @@ public class MainActivity extends AppCompatActivity {
         // 웹뷰 시작
         mWebView = (WebView) findViewById(R.id.webView);
 
-        List<String> ramdomList = Arrays.asList(
-                "/retry/7cif57j77dn172ulk56otfju36m592j0",
-                "/retry/2e6r4bb84qnqi7fdmtv06da18k4n7ko0",
-                "/retry/aqc0l47ig9v6atvhluqf03dftv9p05dl",
-                "/retry/6pseu7tcuhh0q7es4e9tlpucpfivlsfu",
-                "/retry/h0eupn0gcj64n2hisghc869tla8httic"
-        );
+        String url = "https://auth.worksmobile.com/login/login?accessUrl=http%3A%2F%2Fnaddic.ncpworkplace.com%2Fv%2Fhome%2F";
 
-        Random random = new Random();
-        int randomIndex = random.nextInt(ramdomList.size());
-        //System.out.println(ramdomList.get(randomIndex));
+        mWebView.setWebViewClient(new WebViewClient()); // 클릭시 새창 안뜨게
 
-        mWebView.setWebViewClient(new WebViewClient());                 // 클릭시 새창 안뜨게
+        // 예
+//        mWebView.setWebViewClient(new WebViewClient() {
+//            @Override
+//            public void onPageFinished(WebView view, String url) {
+//                super.onPageFinished(view, url);
+//                view.loadUrl("javascript: alert('Loading completed.');");
+//
+//            }
+//        });
+
         mWebSettings = mWebView.getSettings();                          // 세부 세팅 등록
         mWebSettings.setJavaScriptEnabled(true);                        // 웹페이지 자바스크립트 허용 여부
         mWebSettings.setSupportMultipleWindows(false);                  // 새창 띄우기 허용 여부
@@ -46,15 +48,19 @@ public class MainActivity extends AppCompatActivity {
         mWebSettings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.SINGLE_COLUMN); // 컨텐츠 사이즈 맞추기
         mWebSettings.setCacheMode(WebSettings.LOAD_NO_CACHE);           // 브라우저 캐시 허용 여부
         mWebSettings.setDomStorageEnabled(true);                        // 로컬저장소 허용 여부
-
-        // desktopMode
-        String newUserAgent = mWebView.getSettings().getUserAgentString();
-
         mWebSettings.setLoadWithOverviewMode(true);                     // 메타태그 허용 여부
         mWebSettings.setUseWideViewPort(true);                          // 화면 사이즈 맞추기 허용 여부
 
+        // 웹뷰에 크롬 사용 허용, 이 부분이 없으면 크롬에서 alert 뜨지 않음
+        mWebView.setWebChromeClient(new WebChromeClient());
+
+
         // 웹뷰에 표시할 웹사이트 주소, 웹뷰 시작
-        mWebView.loadUrl("https://auth.worksmobile.com/login/login?accessUrl=http%3A%2F%2Fnaddic.ncpworkplace.com%2Fv%2Fhome%2F");
+        //mWebView.loadUrl("https://auth.worksmobile.com/login/login?accessUrl=http%3A%2F%2Fnaddic.ncpworkplace.com%2Fv%2Fhome%2F");
+        mWebView.loadUrl(url);
+
+        // desktopMode
+        String newUserAgent = mWebView.getSettings().getUserAgentString();
 
         try {
             String ua = mWebView.getSettings().getUserAgentString();
@@ -65,5 +71,54 @@ public class MainActivity extends AppCompatActivity {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+//        //
+//        @Override
+//        public boolean onKeyDown(int keyCode, KeyEvent event) { // 뒤로가기 버튼 이벤트
+//            if ((keyCode == KeyEvent.KEYCODE_BACK) && webView.canGoBack()) { // 웹뷰에서 뒤로가기 버튼을 누르면 뒤로 이동
+//                webView.goBack();
+//                return true;
+//            }
+//            return super.onKeyDown(keyCode, event);
+//        }
+
+//        private class WebViewClientClass extends WebViewClient { // 페이지 이동시 새창으로 안뜨게
+//            @Override
+//            public boolean shouldOverrideUrlLoading(WebView view, String url) {
+//                view.loadUrl(url);
+//                return true;
+//            }
+//
+//            @Override
+//            public void onPageFinished(WebView view, String url) {
+//                super.onPageFinished(view, url);
+//
+//                view.loadUrl("javascript:window.Android.getHtml(document.getElementsByTagName('html')[0].innerHTML);");
+//            }
+//        }
+//
+//        public class WebViewJavascriptInterface {
+//            @JavascriptInterface
+//            public void getHtml(String html) {
+//                Log.d(TAG, html);
+//            }
+//        }
     }
+
+// 페이지 이동시 새창으로 안뜨게
+    private class WebViewClientClass extends WebViewClient {
+//        @Override
+//        public boolean shouldOverrideUrlLoading(WebView view, String url) {
+//            view.loadUrl(url);
+//            return true;
+//        }
+
+//        @Override
+//        public void onPageFinished(WebView view, String url) {
+//            super.onPageFinished(view, url);
+//
+//            //view.loadUrl("javascript:window.Android.getHtml(document.getElementsByTagName('html')[0].innerHTML);");
+//        }
+    }
+
 }
